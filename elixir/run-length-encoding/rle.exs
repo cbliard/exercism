@@ -23,13 +23,18 @@ defmodule RunLengthEncoder do
   def encode(letter, count, string, acc) do
     << head::utf8, tail::binary >> = string
     cond do
-      letter == head -> encode(letter, count + 1, tail, acc)
+      head == letter -> encode(head, count + 1, tail, acc)
       true           -> encode(head, 1, tail, encode(letter, count, "", acc))
     end
   end
 
+  def decode("") do
+    ""
+  end
+
   @spec decode(String.t) :: String.t
   def decode(string) do
-
+    {count, << letter::utf8, remaining::binary >>} = Integer.parse(string)
+    String.duplicate(<< letter >>, count) <> decode(remaining)
   end
 end
