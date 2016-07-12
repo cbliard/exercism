@@ -17,15 +17,15 @@ defmodule RunLengthEncoder do
   end
 
   def encode(letter, count, "", acc) do
-    acc <> "#{count}#{<<letter>>}"
+    acc <> Integer.to_string(count) <> <<letter>>
   end
 
-  def encode(letter, count, string, acc) do
-    << head::utf8, tail::binary >> = string
-    cond do
-      head == letter -> encode(head, count + 1, tail, acc)
-      true           -> encode(head, 1, tail, encode(letter, count, "", acc))
-    end
+  def encode(letter, count, << head::utf8, tail::binary >>, acc) when head == letter do
+    encode(letter, count + 1, tail, acc)
+  end
+
+  def encode(letter, count, << head::utf8, tail::binary >>, acc) do
+    encode(head, 1, tail, encode(letter, count, "", acc))
   end
 
   def decode("") do
